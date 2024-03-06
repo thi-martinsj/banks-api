@@ -3,6 +3,8 @@ import sys
 
 import json_logging
 from flask import Flask, request
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 from .config import get_app_config
 from banks.interface.views.api import api
@@ -10,6 +12,7 @@ from banks.interface.views.errors import register_error_handlers
 
 
 logger = logging.getLogger("banks-api")
+db = SQLAlchemy()
 
 
 def create_app():
@@ -19,6 +22,8 @@ def create_app():
     register_error_handlers(api)
     api.init_app(app)
     _set_logging(app)
+    db.init_app(app)
+    Migrate(app, db)
 
     return app
 

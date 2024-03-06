@@ -7,11 +7,11 @@ load_dotenv()
 
 
 class BaseConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI")
 
 
 class TestingConfig(BaseConfig):
-    pass
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 
 def get_app_config():
