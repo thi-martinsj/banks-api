@@ -36,7 +36,7 @@ def get_engine_url():
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from banks.infrastructure.models import Bank
+from banks.infrastructure import models
 
 
 config.set_main_option('sqlalchemy.url', get_engine_url())
