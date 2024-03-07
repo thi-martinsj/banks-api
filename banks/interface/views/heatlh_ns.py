@@ -14,7 +14,7 @@ ns.add_model(health_response_model.name, health_response_model)
 api.add_namespace(ns)
 
 
-@ns.route("/")
+@ns.route("")
 class Health(Resource):
     @ns.response(code=200, description="Health Status Success", model=health_response_model)
     def get(self) -> dict:

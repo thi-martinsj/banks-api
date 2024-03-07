@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 
 from flask_restx import Api
@@ -5,8 +6,13 @@ from flask_restx import Api
 from banks.domain.exceptions import (
     ErrorCodes,
     ForbiddenException,
+    GenericException,
+    IntegrityErrorException,
     UnauthorizedException
 )
+
+
+logger = logging.getLogger("banks-api")
 
 
 def register_error_handlers(api: Api):
@@ -24,8 +30,30 @@ def register_error_handlers(api: Api):
             "message": ErrorCodes.BANK9003.value
         }, HTTPStatus.FORBIDDEN
 
-    @api.errorhandler(Exception)
+    @api.errorhandler(IntegrityErrorException)
+    def handle_integrity_error(error) -> tuple[dict, HTTPStatus]:
+        return {
+            "code": error.code,
+            "message": error.message
+        }, HTTPStatus.BAD_REQUEST
+
+    @api.errorhandler(GenericException)
     def handle_generic_exception_error(error) -> tuple[dict, HTTPStatus]:
+        return {
+            "code": error.code,
+            "message": error.message
+        }, HTTPStatus.BAD_REQUEST
+
+    @api.errorhandler(Exception)
+    def handle_unknown_exception_error(error) -> tuple[dict, HTTPStatus]:
+        logger.error(
+            "Unexpected error",
+            extra={
+                "props": {
+                    "exception": str(error)
+                }
+            }
+        )
         return {
             "code": ErrorCodes.BANK9000.name,
             "message": ErrorCodes.BANK9000.value

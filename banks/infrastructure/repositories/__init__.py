@@ -1,0 +1,1 @@
+from .bank_repository import PostgresBankRepository

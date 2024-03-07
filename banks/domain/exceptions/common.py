@@ -7,9 +7,17 @@ class ErrorCodes(Enum):
     BANK9003 = "User is not authorized to do this action."
 
 
+class GenericException(Exception):
+    pass
+
+
 class UnauthorizedException(Exception):
     pass
 
 
 class ForbiddenException(Exception):
+    pass
+
+
+class IntegrityErrorException(Exception):
     pass
