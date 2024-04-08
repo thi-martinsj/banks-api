@@ -1,4 +1,8 @@
-from flask_restx import fields, Model
+from flask_restx import (
+    fields,
+    Model,
+    reqparse
+)
 
 from banks.domain.exceptions import ErrorCodes
 
@@ -46,6 +50,57 @@ create_bank_response_model = create_bank_request_model.clone(
             example="510af4d3-1c6a-419f-b344-388c8c4d854e"
         )
     }
+)
+
+
+get_banks_response_model = Model(
+    "Get Banks Response",
+    {
+        "banks": fields.List(
+            fields.Nested(create_bank_response_model),
+            description="List of banks",
+            required=True
+        ),
+        "offset": fields.Integer(
+            description="Offset for pagination",
+            required=True,
+            example=0
+        ),
+        "limit": fields.Integer(
+            description="Limit for pagination",
+            required=True,
+            example=50
+        )
+    }
+)
+
+
+get_banks_params = reqparse.RequestParser()
+get_banks_params.add_argument(
+    "name",
+    type=str,
+    required=False,
+    help="Bank name"
+)
+get_banks_params.add_argument(
+    "ispb",
+    type=str,
+    required=False,
+    help="ISPB code"
+)
+get_banks_params.add_argument(
+    "offset",
+    type=int,
+    required=False,
+    default=0,
+    help="Offset for pagination"
+)
+get_banks_params.add_argument(
+    "limit",
+    type=int,
+    required=False,
+    default=50,
+    help="Limit for pagination"
 )
 
 
@@ -98,3 +153,23 @@ forbidden_response_model = Model(
         )
     }
 )
+
+
+general_not_found_response_model = Model(
+    "Not Found",
+    {
+        "code": fields.String(
+            description="Not found code",
+            required=True,
+            example=ErrorCodes.BANK9004.name
+        ),
+        "message": fields.String(
+            description="Not found message",
+            required=True,
+            example=ErrorCodes.BANK9004.value
+        )
+    }
+)
+
+
+

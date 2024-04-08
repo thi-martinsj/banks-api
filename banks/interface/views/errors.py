@@ -8,6 +8,7 @@ from banks.domain.exceptions import (
     ForbiddenException,
     GenericException,
     IntegrityErrorException,
+    NotFoundException,
     UnauthorizedException
 )
 
@@ -36,6 +37,13 @@ def register_error_handlers(api: Api):
             "code": error.code,
             "message": error.message
         }, HTTPStatus.BAD_REQUEST
+
+    @api.errorhandler(NotFoundException)
+    def handle_not_found_error(error) -> tuple[dict, HTTPStatus]:
+        return {
+            "code": error.code,
+            "message": error.message
+        }, HTTPStatus.NOT_FOUND
 
     @api.errorhandler(GenericException)
     def handle_generic_exception_error(error) -> tuple[dict, HTTPStatus]:
