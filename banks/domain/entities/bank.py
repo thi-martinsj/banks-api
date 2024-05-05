@@ -32,6 +32,16 @@ class Bank:
 
         self._id = value
 
+    @name.setter
+    def name(self, value: str) -> None:
+        if value and value != self._name:
+            self._name = value
+
+    @ispb.setter
+    def ispb(self, value: str) -> None:
+        if value and value != self._ispb:
+            self._ispb = value
+
     @property
     def dict(self) -> dict:
         return {

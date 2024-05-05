@@ -41,6 +41,23 @@ create_bank_request_model = Model(
 )
 
 
+update_bank_request_model = Model(
+    "Update Bank Request",
+    {
+        "ispb": fields.String(
+            description="ISPB code",
+            required=False,
+            example="001"
+        ),
+        "name": fields.String(
+            description="Bank name",
+            required=False,
+            example="Bank of Brazil"
+        )
+    }
+)
+
+
 create_bank_response_model = create_bank_request_model.clone(
     "Create Bank Response",
     {
@@ -170,6 +187,3 @@ general_not_found_response_model = Model(
         )
     }
 )
-
-
-

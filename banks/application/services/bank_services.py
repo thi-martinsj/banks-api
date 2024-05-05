@@ -168,3 +168,53 @@ class BankService:
         )
 
         return bank
+
+    @classmethod
+    def update_bank(
+        cls,
+        bank_id: str,
+        mapping: BankMapping,
+        bank_repository: BankRepository
+    ) -> Bank:
+        logger.info(
+            "Updating bank.",
+            extra={
+                "props": {
+                    "bank_id": str(bank_id),
+                    "ispb": mapping.ispb,
+                    "name": mapping.name
+                }
+            }
+        )
+
+        bank = cls.get_bank(bank_id=bank_id, bank_repository=bank_repository)
+        bank.ispb = mapping.ispb
+        bank.name = mapping.name
+
+        try:
+            bank_repository.update(bank)
+        except BankException as e:
+            logger.error(
+                "Error updating bank.",
+                extra={
+                    "props": {
+                        "bank_id": str(bank_id),
+                        "ispb": mapping.ispb,
+                        "name": mapping.name
+                    }
+                }
+            )
+            raise e
+
+        logger.info(
+            "Bank updated successfully.",
+            extra={
+                "props": {
+                    "bank_id": str(bank_id),
+                    "ispb": mapping.ispb,
+                    "name": mapping.name
+                }
+            }
+        )
+
+        return bank

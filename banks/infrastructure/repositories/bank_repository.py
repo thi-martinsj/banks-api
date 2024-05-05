@@ -1,5 +1,6 @@
 import logging
 
+from sqlalchemy import update
 from sqlalchemy.exc import IntegrityError
 
 from banks import db
@@ -167,3 +168,53 @@ class PostgresBankRepository(BankRepository):
             )
             for bank in banks
         ]
+
+    @classmethod
+    def update(cls, bank: Bank) -> Bank:
+        logger.info(
+            "Updating bank in database.",
+            extra={
+                "props": {
+                    "bank_id": bank.id,
+                    "name": bank.name,
+                    "ispb": bank.ispb
+                }
+            }
+        )
+
+        try:
+            db.session.execute(
+                update(BankModel),
+                [
+                    bank.dict
+                ]
+            )
+            db.session.commit()
+
+        except Exception as e:
+            logger.error(
+                "Error updating bank in database.",
+                extra={
+                    "props": {
+                        "bank_id": bank.id,
+                        "name": bank.name,
+                        "ispb": bank.ispb,
+                        "exception": str(e)
+                    }
+                }
+            )
+
+            raise BankException
+
+        logger.info(
+            "Updated bank in database successfully.",
+            extra={
+                "props": {
+                    "bank_id": bank.id,
+                    "name": bank.name,
+                    "ispb": bank.ispb
+                }
+            }
+        )
+
+        return bank

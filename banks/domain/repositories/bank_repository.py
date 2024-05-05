@@ -15,3 +15,7 @@ class BankRepository(ABC):
     @classmethod
     def get(cls, bank_id: str) -> Bank:
         raise NotImplementedError
+
+    @classmethod
+    def update(cls, bank: Bank) -> Bank:
+        raise NotImplementedError
