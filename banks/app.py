@@ -3,6 +3,7 @@ import sys
 
 import json_logging
 from flask import Flask, request
+from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -24,6 +25,7 @@ def create_app():
     _set_logging(app)
     db.init_app(app)
     Migrate(app, db)
+    JWTManager(app)
 
     return app
 

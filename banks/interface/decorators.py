@@ -9,7 +9,7 @@ from flask_restx import (
 from .mappings import BaseMapping
 
 
-def expect_json_data(ns: Namespace, mapping: BaseMapping, model: Model):
+def json_data_required(ns: Namespace, mapping: BaseMapping, model: Model):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):

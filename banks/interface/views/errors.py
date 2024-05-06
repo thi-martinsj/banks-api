@@ -1,6 +1,8 @@
 import logging
 from http import HTTPStatus
+from jwt import InvalidSignatureError
 
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_restx import Api
 
 from banks.domain.exceptions import (
@@ -8,8 +10,7 @@ from banks.domain.exceptions import (
     ForbiddenException,
     GenericException,
     IntegrityErrorException,
-    NotFoundException,
-    UnauthorizedException
+    NotFoundException
 )
 
 
@@ -17,7 +18,8 @@ logger = logging.getLogger("banks-api")
 
 
 def register_error_handlers(api: Api):
-    @api.errorhandler(UnauthorizedException)
+    @api.errorhandler(InvalidSignatureError)
+    @api.errorhandler(NoAuthorizationError)
     def handle_unauthorized_error(error) -> tuple[dict, HTTPStatus]:
         return {
             "code": ErrorCodes.BANK9001.name,

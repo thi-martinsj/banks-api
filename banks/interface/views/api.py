@@ -8,5 +8,13 @@ api = Api(
     title="Banks API",
     version=VERSION,
     description=DESCRIPTION,
-    doc="/docs"
+    doc="/docs",
+    authorizations={
+        "Bearer Auth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0N"
+        }
+    }
 )

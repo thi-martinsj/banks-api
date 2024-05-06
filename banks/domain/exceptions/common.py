@@ -12,10 +12,6 @@ class GenericException(Exception):
     pass
 
 
-class UnauthorizedException(Exception):
-    pass
-
-
 class ForbiddenException(Exception):
     pass
 

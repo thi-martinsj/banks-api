@@ -8,6 +8,5 @@ from .common import (
     ForbiddenException,
     GenericException,
     IntegrityErrorException,
-    NotFoundException,
-    UnauthorizedException
+    NotFoundException
 )

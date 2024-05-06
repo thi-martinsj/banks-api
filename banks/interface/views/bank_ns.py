@@ -2,6 +2,7 @@ from http import HTTPStatus
 from uuid import UUID
 
 from flask import request
+from flask_jwt_extended import jwt_required
 from flask_restx import (
     Namespace,
     Resource
@@ -20,7 +21,7 @@ from .schemas import (
     update_bank_request_model
 )
 from banks.application.services import BankService
-from banks.interface.decorators import expect_json_data
+from banks.interface.decorators import json_data_required
 from banks.interface.mappings import BankMapping
 
 
@@ -50,9 +51,11 @@ def get_repository():
 @ns.response(HTTPStatus.BAD_REQUEST, "Unexpected error", general_error_response_model)
 @ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized", unauthorized_response_model)
 @ns.response(HTTPStatus.FORBIDDEN, "Forbidden", forbidden_response_model)
+@ns.doc(security="Bearer Auth")
 class Banks(Resource):
-    @expect_json_data(ns, BankMapping, create_bank_request_model)
     @ns.response(HTTPStatus.CREATED, "Bank created successfully", create_bank_response_model)
+    @json_data_required(ns, BankMapping, create_bank_request_model)
+    @jwt_required()
     def post(self, mapping: BankMapping) -> tuple[dict, HTTPStatus]:
         bank = BankService.create_bank(mapping, get_repository())
         return bank.dict, HTTPStatus.CREATED
@@ -60,6 +63,7 @@ class Banks(Resource):
     @ns.response(HTTPStatus.OK, "Banks retrieved successfully", get_banks_response_model)
     @ns.response(HTTPStatus.NOT_FOUND, "Resource not found", general_not_found_response_model)
     @ns.expect(get_banks_params, validate=True)
+    @jwt_required()
     def get(self) -> tuple[dict, HTTPStatus]:
         banks = BankService.get_banks(request.args, get_repository())
         return banks, HTTPStatus.OK
@@ -70,19 +74,23 @@ class Banks(Resource):
 @ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized", unauthorized_response_model)
 @ns.response(HTTPStatus.FORBIDDEN, "Forbidden", forbidden_response_model)
 @ns.response(HTTPStatus.NOT_FOUND, "Resource not found", general_not_found_response_model)
+@ns.doc(security="Bearer Auth")
 class Bank(Resource):
     @ns.response(HTTPStatus.OK, "Bank retrieved successfully", create_bank_response_model)
+    @jwt_required()
     def get(self, bank_id: UUID) -> tuple[dict, HTTPStatus]:
         bank = BankService.get_bank(bank_id, get_repository())
         return bank.dict, HTTPStatus.OK
 
     @ns.response(HTTPStatus.OK, "Bank updated successfully", create_bank_response_model)
-    @expect_json_data(ns, BankMapping, update_bank_request_model)
+    @json_data_required(ns, BankMapping, update_bank_request_model)
+    @jwt_required()
     def patch(self, bank_id: UUID, mapping: BankMapping) -> tuple[dict, HTTPStatus]:
         bank = BankService.update_bank(bank_id, mapping, get_repository())
         return bank.dict, HTTPStatus.OK
 
     @ns.response(HTTPStatus.OK, "Bank deleted successfully", create_bank_request_model)
+    @jwt_required()
     def delete(self, bank_id: UUID) -> tuple[dict, HTTPStatus]:
         bank = BankService.delete_bank(bank_id, get_repository())
         return bank.dict, HTTPStatus.OK
