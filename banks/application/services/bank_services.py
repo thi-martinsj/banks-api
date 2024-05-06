@@ -1,6 +1,6 @@
 import logging
-
 from typing import Optional
+from uuid import UUID
 
 from banks.domain.entities import Bank
 from banks.domain.exceptions import (
@@ -124,7 +124,7 @@ class BankService:
         }
 
     @classmethod
-    def get_bank(cls, bank_id: str, bank_repository: BankRepository) -> Bank:
+    def get_bank(cls, bank_id: UUID, bank_repository: BankRepository) -> Bank:
         logger.info(
             "Retrieving bank.",
             extra={
@@ -172,7 +172,7 @@ class BankService:
     @classmethod
     def update_bank(
         cls,
-        bank_id: str,
+        bank_id: UUID,
         mapping: BankMapping,
         bank_repository: BankRepository
     ) -> Bank:
@@ -187,7 +187,7 @@ class BankService:
             }
         )
 
-        bank = cls.get_bank(bank_id=bank_id, bank_repository=bank_repository)
+        bank = cls.get_bank(bank_id, bank_repository)
         bank.ispb = mapping.ispb
         bank.name = mapping.name
 
@@ -213,6 +213,43 @@ class BankService:
                     "bank_id": str(bank_id),
                     "ispb": mapping.ispb,
                     "name": mapping.name
+                }
+            }
+        )
+
+        return bank
+
+    @classmethod
+    def delete_bank(cls, bank_id: UUID, bank_repository: BankRepository) -> Bank:
+        logger.info(
+            "Deleting bank.",
+            extra={
+                "props": {
+                    "bank_id": str(bank_id)
+                }
+            }
+        )
+
+        bank = cls.get_bank(bank_id, bank_repository)
+
+        try:
+            bank_repository.delete(bank_id)
+        except BankException as e:
+            logger.error(
+                "Error deleting bank.",
+                extra={
+                    "props": {
+                        "bank_id": str(bank_id)
+                    }
+                }
+            )
+            raise e
+
+        logger.info(
+            "Bank deleted successfully.",
+            extra={
+                "props": {
+                    "bank_id": str(bank_id)
                 }
             }
         )

@@ -1,4 +1,5 @@
 from abc import ABC
+from uuid import UUID
 
 from banks.domain.entities import Bank
 
@@ -13,9 +14,13 @@ class BankRepository(ABC):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, bank_id: str) -> Bank:
+    def get(cls, bank_id: UUID) -> Bank:
         raise NotImplementedError
 
     @classmethod
     def update(cls, bank: Bank) -> Bank:
+        raise NotImplementedError
+
+    @classmethod
+    def delete(cls, bank_id: UUID) -> None:
         raise NotImplementedError

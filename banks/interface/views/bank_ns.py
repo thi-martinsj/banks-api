@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from uuid import UUID
 
 from flask import request
 from flask_restx import (
@@ -71,12 +72,17 @@ class Banks(Resource):
 @ns.response(HTTPStatus.NOT_FOUND, "Resource not found", general_not_found_response_model)
 class Bank(Resource):
     @ns.response(HTTPStatus.OK, "Bank retrieved successfully", create_bank_response_model)
-    def get(self, bank_id: str) -> tuple[dict, HTTPStatus]:
+    def get(self, bank_id: UUID) -> tuple[dict, HTTPStatus]:
         bank = BankService.get_bank(bank_id, get_repository())
         return bank.dict, HTTPStatus.OK
 
     @ns.response(HTTPStatus.OK, "Bank updated successfully", create_bank_response_model)
     @expect_json_data(ns, BankMapping, update_bank_request_model)
-    def patch(self, bank_id: str, mapping: BankMapping) -> tuple[dict, HTTPStatus]:
+    def patch(self, bank_id: UUID, mapping: BankMapping) -> tuple[dict, HTTPStatus]:
         bank = BankService.update_bank(bank_id, mapping, get_repository())
+        return bank.dict, HTTPStatus.OK
+
+    @ns.response(HTTPStatus.OK, "Bank deleted successfully", create_bank_request_model)
+    def delete(self, bank_id: UUID) -> tuple[dict, HTTPStatus]:
+        bank = BankService.delete_bank(bank_id, get_repository())
         return bank.dict, HTTPStatus.OK

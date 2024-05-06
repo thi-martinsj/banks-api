@@ -1,6 +1,10 @@
 import logging
+from uuid import UUID
 
-from sqlalchemy import update
+from sqlalchemy import (
+    delete,
+    update
+)
 from sqlalchemy.exc import IntegrityError
 
 from banks import db
@@ -77,7 +81,7 @@ class PostgresBankRepository(BankRepository):
         return bank
 
     @classmethod
-    def get(cls, bank_id: str) -> Bank:
+    def get(cls, bank_id: UUID) -> Bank:
         logger.info(
             "Retrieving bank from database.",
             extra={
@@ -218,3 +222,43 @@ class PostgresBankRepository(BankRepository):
         )
 
         return bank
+
+    @classmethod
+    def delete(cls, bank_id: UUID) -> None:
+        logger.info(
+            "Deleting bank from database.",
+            extra={
+                "props": {
+                    "bank_id": bank_id
+                }
+            }
+        )
+
+        try:
+            db.session.execute(
+                delete(BankModel)
+                .where(
+                    BankModel.id == bank_id
+                )
+            )
+            db.session.commit()
+        except Exception as e:
+            logger.error(
+                "Error deleting bank from database.",
+                extra={
+                    "props": {
+                        "bank_id": bank_id,
+                        "exception": str(e)
+                    }
+                }
+            )
+            raise BankException
+
+        logger.info(
+            "Bank deleted from database successfully.",
+            extra={
+                "props": {
+                    "bank_id": bank_id
+                }
+            }
+        )
