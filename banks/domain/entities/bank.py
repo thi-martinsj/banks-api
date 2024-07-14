@@ -34,12 +34,12 @@ class Bank:
 
     @name.setter
     def name(self, value: str) -> None:
-        if value and value != self._name:
+        if value:
             self._name = value
 
     @ispb.setter
     def ispb(self, value: str) -> None:
-        if value and value != self._ispb:
+        if value:
             self._ispb = value
 
     @property

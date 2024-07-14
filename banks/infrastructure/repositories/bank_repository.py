@@ -27,8 +27,7 @@ class PostgresBankRepository(BankRepository):
             "Inserting a new bank into database.",
             extra={
                 "props": {
-                    "name": bank.name,
-                    "ispb": bank.ispb
+                    "bank": repr(bank)
                 }
             }
         )
@@ -41,42 +40,40 @@ class PostgresBankRepository(BankRepository):
             db.session.add(bank_model)
             db.session.commit()
         except IntegrityError as e:
+            db.session.rollback()
             logger.error(
                 "Bank already exists in database.",
                 extra={
                     "props": {
-                        "name": bank.name,
-                        "ispb": bank.ispb,
+                        "bank": repr(bank),
                         "exception": str(e)
                     }
                 }
             )
             raise BankAlreadyExistsException
         except Exception as e:
+            db.session.rollback()
             logger.error(
                 "Error inserting bank into database.",
                 extra={
                     "props": {
-                        "name": bank.name,
-                        "ispb": bank.ispb,
+                        "bank": repr(bank),
                         "exception": str(e)
                     }
                 }
             )
             raise BankException
 
+        bank.id = bank_model.id
+
         logger.info(
             "Bank inserted successfully.",
             extra={
                 "props": {
-                    "id": str(bank_model.id),
-                    "name": bank_model.name,
-                    "ispb": bank_model.ispb
+                    "bank": repr(bank)
                 }
             }
         )
-
-        bank.id = bank_model.id
 
         return bank
 
@@ -179,9 +176,7 @@ class PostgresBankRepository(BankRepository):
             "Updating bank in database.",
             extra={
                 "props": {
-                    "bank_id": bank.id,
-                    "name": bank.name,
-                    "ispb": bank.ispb
+                    "bank": repr(bank)
                 }
             }
         )
@@ -200,9 +195,7 @@ class PostgresBankRepository(BankRepository):
                 "Error updating bank in database.",
                 extra={
                     "props": {
-                        "bank_id": bank.id,
-                        "name": bank.name,
-                        "ispb": bank.ispb,
+                        "bank": repr(bank),
                         "exception": str(e)
                     }
                 }
@@ -214,9 +207,7 @@ class PostgresBankRepository(BankRepository):
             "Updated bank in database successfully.",
             extra={
                 "props": {
-                    "bank_id": bank.id,
-                    "name": bank.name,
-                    "ispb": bank.ispb
+                    "bank": repr(bank)
                 }
             }
         )

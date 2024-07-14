@@ -61,9 +61,7 @@ class BankService:
             "Bank created successfully.",
             extra={
                 "props": {
-                    "id": bank.id,
-                    "name": bank.name,
-                    "ispb": bank.ispb
+                    "bank": repr(bank)
                 }
             }
         )
@@ -162,7 +160,7 @@ class BankService:
             "Bank retrieved successfully.",
             extra={
                 "props": {
-                    "bank": bank.dict
+                    "bank": repr(bank)
                 }
             }
         )

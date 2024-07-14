@@ -29,15 +29,3 @@ class Account(CommonFieldsMixin):
     __table_args__ = (
         UniqueConstraint("bank_id", "agency", "number", "account_type_id", name="uq_bank_agency_number_account_type"),
     )
-
-    def __repr__(self) -> str:
-        return f"Account( \
-            id={self.id!r}, \
-            bank_id={self.bank_id!r}, \
-            account_type_id={self.account_type_id!r}, \
-            currency_id={self.currency_id!r}, \
-            user_id={self.user_id!r}, \
-            agency={self.agency}, \
-            number={self.number}, \
-            is_active={self.is_active} \
-        )"
