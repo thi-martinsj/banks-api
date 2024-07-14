@@ -1,8 +1,42 @@
+import os
+
 import pytest
+from flask_migrate import upgrade, downgrade
 from uuid import UUID
 
+from banks import create_app, db
 from banks.domain.entities import Bank
 from banks.interface.mappings import BankMapping
+
+
+@pytest.fixture(scope="session")
+def app():
+    os.environ["DEPLOY_ENV"] = "Testing"
+    _app = create_app()
+    _app.app_context().push()
+
+    with _app.app_context():
+        upgrade(directory='migrations')
+
+    yield _app
+
+    with _app.app_context():
+        downgrade(directory='migrations', revision='base')
+        db.session.remove()
+        db.drop_all()
+
+
+@pytest.fixture(scope='function', autouse=True)
+def clean_db(app):
+    with app.app_context():
+        db.session.remove()
+        db.drop_all()
+        db.create_all()
+
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
 
 
 @pytest.fixture
@@ -16,6 +50,14 @@ def bank_payload():
 @pytest.fixture
 def bank_mapping(bank_payload):
     return BankMapping(payload=bank_payload)
+
+
+@pytest.fixture
+def bank(bank_payload):
+    return Bank(
+        name=bank_payload["name"],
+        ispb=bank_payload["ispb"]
+    )
 
 
 @pytest.fixture
