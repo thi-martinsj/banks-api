@@ -89,7 +89,7 @@ class PostgresBankRepository(BankRepository):
         )
 
         try:
-            bank = db.session.query(BankModel).get(bank_id)
+            bank = db.session.query(BankModel).get(str(bank_id))
         except Exception as e:
             logger.error(
                 "Error retrieving bank from database.",
@@ -191,6 +191,7 @@ class PostgresBankRepository(BankRepository):
             db.session.commit()
 
         except Exception as e:
+            db.session.rollback()
             logger.error(
                 "Error updating bank in database.",
                 extra={
@@ -229,11 +230,12 @@ class PostgresBankRepository(BankRepository):
             db.session.execute(
                 delete(BankModel)
                 .where(
-                    BankModel.id == bank_id
+                    BankModel.id == str(bank_id)
                 )
             )
             db.session.commit()
         except Exception as e:
+            db.session.rollback()
             logger.error(
                 "Error deleting bank from database.",
                 extra={

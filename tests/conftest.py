@@ -1,6 +1,7 @@
 import os
 
 import pytest
+from flask_jwt_extended import create_access_token
 from flask_migrate import upgrade, downgrade
 from uuid import UUID
 
@@ -37,6 +38,11 @@ def clean_db(app):
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture
+def jwt_token():
+    return create_access_token("test")
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
 from .banks_exception import (
     BankAlreadyExistsException,
+    BankErrorCodes,
     BankException,
     BankNotFoundException
 )
